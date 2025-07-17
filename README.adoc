@@ -1,0 +1,57 @@
+
+= parent-pom
+
+image:https://img.shields.io/github/license/nav-gov-hu/parent-pom?style=plastic&logo=mit[License of Parent pom project]
+
+:sectnums:
+
+Generic parent POM for every Maven project.
+Its purpose is to centralize general Maven and plugin configurations in one place.
+
+== Maven central
+The project is also built in the official Maven repository, 
+so projects automatically pull it:
+
+=== General settings
+Contains the default common maven plugin and corporate settings for all projects.
+
+.General settings
+[source, xml]
+----
+    <dependency>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>${version}</version>
+    </dependency>
+----
+
+=== Nav internal
+This is used to set up the NAV internal repository and other NAV-specific configurations.
+Pom is child of the parent-pom, so it inherits all the general settings.
+
+.Nav internal setting
+[source, xml]
+----
+    <dependency>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>nav</artifactId>
+        <version>${version}</version>
+    </dependency>
+----
+
+=== Nav Open source
+This is used to set up the NAV open source repository and other NAV-specific configurations.
+Pom is child of the parent-pom, so it inherits all the general settings.
+
+.Nav Open source setting
+[source, xml]
+----
+    <dependency>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>oss</artifactId>
+        <version>${version}</version>
+    </dependency>
+----
+
+== Description
+For more detailed information, please refer to https://github.com/nav-gov-hu/parent-pom.
