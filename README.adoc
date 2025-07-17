@@ -9,7 +9,7 @@ Generic parent POM for every Maven project.
 Its purpose is to centralize general Maven and plugin configurations in one place.
 
 == Maven central
-The project is also built in the official Maven repository, 
+The project is also published to the official Maven repository, so other projects can automatically pull it.
 so projects automatically pull it:
 
 === General settings
