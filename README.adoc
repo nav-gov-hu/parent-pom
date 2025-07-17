@@ -5,7 +5,7 @@ image:https://img.shields.io/github/license/nav-gov-hu/parent-pom?style=plastic&
 
 :sectnums:
 
-Generic parent POM for every Maven project.
+Generic parent POM for every NAV's Maven project.
 Its purpose is to centralize general Maven and plugin configurations in one place.
 
 == Maven central
@@ -15,42 +15,63 @@ so projects automatically pull it:
 === General settings
 Contains the default common maven plugin and corporate settings for all projects.
 
-.General settings
+.General settings used in pom
 [source, xml]
 ----
-    <dependency>
+<project ...>
+    <parent>
         <groupId>hu.gov.nav.pom</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>${version}</version>
-    </dependency>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
 ----
 
 === Nav internal
 This is used to set up the NAV internal repository and other NAV-specific configurations.
 Pom is child of the parent-pom, so it inherits all the general settings.
 
-.Nav internal setting
+.Nav internal setting used in pom
 [source, xml]
 ----
-    <dependency>
+<project ...>
+    <parent>
         <groupId>hu.gov.nav.pom</groupId>
         <artifactId>nav</artifactId>
-        <version>${version}</version>
-    </dependency>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
 ----
 
 === Nav Open source
 This is used to set up the NAV open source repository and other NAV-specific configurations.
 Pom is child of the parent-pom, so it inherits all the general settings.
 
-.Nav Open source setting
+.Nav Open source setting used in pom
 [source, xml]
 ----
-    <dependency>
+<project ...>
+    <parent>
         <groupId>hu.gov.nav.pom</groupId>
         <artifactId>oss</artifactId>
-        <version>${version}</version>
-    </dependency>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
 ----
 
 == Description
