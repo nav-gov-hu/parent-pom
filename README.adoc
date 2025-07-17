@@ -1,0 +1,78 @@
+
+= parent-pom
+
+image:https://img.shields.io/github/license/nav-gov-hu/parent-pom?style=plastic&logo=mit[License of Parent pom project]
+
+:sectnums:
+
+Generic parent POM for every NAV's Maven project.
+Its purpose is to centralize general Maven and plugin configurations in one place.
+
+== Maven central
+The project is also published to the official Maven repository, so other projects can automatically pull it.
+so projects automatically pull it:
+
+=== General settings
+Contains the default common maven plugin and corporate settings for all projects.
+
+.General settings used in pom
+[source, xml]
+----
+<project ...>
+    <parent>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
+----
+
+=== Nav internal
+This is used to set up the NAV internal repository and other NAV-specific configurations.
+Pom is child of the parent-pom, so it inherits all the general settings.
+
+.Nav internal setting used in pom
+[source, xml]
+----
+<project ...>
+    <parent>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>nav</artifactId>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
+----
+
+=== Nav Open source
+This is used to set up the NAV open source repository and other NAV-specific configurations.
+Pom is child of the parent-pom, so it inherits all the general settings.
+
+.Nav Open source setting used in pom
+[source, xml]
+----
+<project ...>
+    <parent>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>oss</artifactId>
+        <version>PARENT_POM_VERSION</version>
+    </parent>
+
+    <groupId>CUSTOM_PROJECT_GROUP_ID</groupId>
+    <artifactId>CUSTOM_PROJECT_ARTIFACT_ID</artifactId>
+    <version>CUSTOM_PROJECT_VERSION</version>
+...
+</project>
+----
+
+== Description
+For more detailed information, please refer to https://github.com/nav-gov-hu/parent-pom.

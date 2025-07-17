@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>hu.gov.nav.pom</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>0.3.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>nav</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.scm.id>zenit-scm-id</project.scm.id>
+    </properties>
+
+    <licenses>
+        <license>
+            <!-- Empty to prevent inheriting licenses from parent POM -->
+        </license>
+    </licenses>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>nav-maven-public</id>
+            <name>Nav Maven public</name>
+            <url>${env.NAV_NEXUS_MAVEN_PUBLIC_URL}</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>nav-maven-public</id>
+            <name>Nav Maven public</name>
+            <url>${env.NAV_NEXUS_MAVEN_PUBLIC_URL}</url>
+        </pluginRepository>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>nav-maven-release</id>
+            <name>Nav Maven Releases</name>
+            <url>${env.NAV_NEXUS_MAVEN_RELEASE_URL}</url>
+            <layout>default</layout>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>nav-maven-snapshot</id>
+            <name>Nav Maven Snapshots</name>
+            <url>${env.NAV_NEXUS_MAVEN_SNAPSHOT_URL}</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
