@@ -15,12 +15,9 @@ on:
         # Input has to be provided for the workflow to run
         required: true
 
-env:
-  MAVEN_ARGS: "-P parent-pom-release"
-
 jobs:
   deploy-snapshot:
     uses: ./.github/workflows/WF-release.yml
-    # with:
-    #   wf-maven-cmd-customization: '-P parent-pom-release'
+    with:
+      wf-maven-cmd-customization: '-P parent-pom-release'
     secrets: inherit

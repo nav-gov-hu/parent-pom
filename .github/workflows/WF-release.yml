@@ -133,13 +133,13 @@ jobs:
         id: prepare
         shell: bash
         run: |
-          mvn -B $MAVEN_ARGS release:prepare -DdryRun=true
+          mvn -B ${{ inputs.maven-cmd-customization }} release:prepare -DdryRun=true
           if [[ "${{ steps.precheck.outputs.VERSION_TYPE }}" == "MINOR" ]]; then
             SCM_TAG=`cat release.properties | grep -w "scm.tag" | cut -d'=' -f2`
             echo "SCM_TAG=${SCM_TAG}" 
             echo "SCM_TAG=${SCM_TAG}" >> $GITHUB_OUTPUT
           fi
-          mvn -B $MAVEN_ARGS release:clean --file pom.xml
+          mvn -B ${{ inputs.maven-cmd-customization }} release:clean --file pom.xml
           if [[ "${{ steps.precheck.outputs.VERSION_TYPE }}" == "MINOR" ]]; then
             RELEASE_BRANCH_NAME=release/${SCM_TAG%.*}.x
             echo "RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME}"
@@ -169,13 +169,13 @@ jobs:
       - name: Maven release PREPARE
         shell: bash
         run: |
-            mvn -B $MAVEN_ARGS release:prepare -Dgpg.keyname=${{ secrets.TECHUSER_GPG_KEY_ID }}
+            mvn -B ${{ inputs.maven-cmd-customization }} release:prepare -Dgpg.keyname=${{ secrets.TECHUSER_GPG_KEY_ID }}
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.TECHUSER_GPG_KEY_PASSPHRASE }}
 
       - name: Maven release PERFORM
         shell: bash
-        run: mvn -B $MAVEN_ARGS release:perform -Dgpg.keyname=${{ secrets.TECHUSER_GPG_KEY_ID }}
+        run: mvn -B ${{ inputs.maven-cmd-customization }} release:perform -Dgpg.keyname=${{ secrets.TECHUSER_GPG_KEY_ID }}
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER_USERNAME }}
           MAVEN_PASSWORD: '${{ secrets.MAVEN_CENTRAL_USER_PASSWORD }}'
