@@ -3,7 +3,7 @@
 
     <groupId>hu.gov.nav.pom</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.3.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -51,12 +51,12 @@
         </license>
     </licenses>
 
-    <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false"
-        child.scm.url.inherit.append.path="false">
+    <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
         <connection>scm:git:git@github.com:nav-gov-hu/parent-pom.git</connection>
         <developerConnection>scm:git:git@github.com:nav-gov-hu/parent-pom.git</developerConnection>
         <url>https://github.com/nav-gov-hu/parent-pom</url>
-    </scm>
+      <tag>parent-pom-0.3.0</tag>
+  </scm>
 
     <build>
         <pluginManagement>
