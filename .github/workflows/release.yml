@@ -19,5 +19,5 @@ jobs:
   deploy-snapshot:
     uses: ./.github/workflows/WF-release.yml
     with:
-      wf-maven-cmd-customization: '-P parent-pom-release'
+      maven-cmd-customization: '-P parent-pom-release'
     secrets: inherit
