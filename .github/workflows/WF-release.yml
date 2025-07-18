@@ -1,0 +1,265 @@
+# It prepares a Maven release, creates a release branch, performs the release, and bumps the version.
+name: (WF) Maven Release
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        required: false
+        type: string
+        default: '21'
+        description: 'Java version to use for the job'
+      java-distribution:
+        required: false
+        type: string
+        default: 'temurin'
+        description: 'Java distribution to use for the job'
+      wf-maven-settings-xml-server-id:
+        required: false
+        type: string
+        default: 'central'
+        description: 'Used to generate server ID in generated maven settings XML to upload artifacts'
+      wf-maven-cmd-customization:
+        required: false
+        type: string
+        default: ''
+        description: 'Customize Maven command for release commands'
+      wf-gpg-key-id:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_GPG_KEY_ID }}
+        description: 'GPG key ID for git commands'
+      wf-gpg-private-key:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_GPG_PRIVATE_KEY }}
+        description: 'GPG private key for signing commits'
+      wf-gpg-key-passphrase:
+        required: false
+        type: string
+        default: ''
+        description: 'GPG key passphrase for signing commits and artifacts'
+      wf-ssh-private-key:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_SSH_PRIVATE_KEY }}
+        description: 'SSH private key for git commands'
+      wf-git-username:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_USERNAME }}
+        description: 'Git username for git commands'
+      wf-git-email:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_EMAIL }}
+        description: 'Git email for git commands'
+      wf-github-token:
+        required: false
+        type: string
+        default: ${{ secrets.TECHUSER_GH_TOKEN }}
+        description: 'GitHub token for github API commands'
+      wf-maven-central-username:
+        required: false
+        type: string
+        default: ${{ secrets.MAVEN_CENTRAL_USER_USERNAME }}
+        description: 'Maven Central username for publishing artifacts'
+      wf-maven-central-password:
+        required: false
+        type: string
+        default: ${{ secrets.MAVEN_CENTRAL_USER_PASSWORD }}
+        description: 'Maven Central password for publishing artifacts'
+
+jobs:
+  deploy-snapshot:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print
+        shell: bash
+        run: |
+          echo "github.event.inputs.comment: '${{ github.event.inputs.comment }}'"
+          echo "github.ref_name: '${{ github.ref_name }}'"
+          echo "github.event.ref: '${{ github.event.ref }}'"
+          echo "github.repository: '${{ github.repository }}'"
+          echo "github.workspace: '${{ github.workspace }}'"
+          echo "java-version: '${{ inputs.java-version }}'"
+          echo "java-distribution: '${{ inputs.java-distribution }}'"
+          echo "wf-maven-settings-xml-server-id: '${{ inputs.wf-maven-settings-xml-server-id }}'"
+          echo "wf-maven-cmd-customization: '${{ inputs.wf-maven-cmd-customization }}'"
+          echo "wf-gpg-key-id: '${{ inputs.wf-gpg-key-id }}'"
+          echo "wf-gpg-private-key: '${{ inputs.wf-gpg-private-key }}'"
+          echo "wf-gpg-key-passphrase: '${{ inputs.wf-gpg-key-passphrase }}'"
+          echo "wf-ssh-private-key: '${{ inputs.wf-ssh-private-key }}'"
+          echo "wf-git-username: '${{ inputs.wf-git-username }}'"
+          echo "wf-git-email: '${{ inputs.wf-git-email }}'"
+          echo "wf-github-token: '${{ inputs.wf-github-token }}'"
+          echo "wf-maven-central-username: '${{ inputs.wf-maven-central-username }}'"
+          echo "wf-maven-central-password: '${{ inputs.wf-maven-central-password }}'"
+
+      - name: Check branch (workflow can run only main/master branch)
+        id: precheck
+        shell: bash
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" || "${{ github.ref_name }}" == "master" ]]; then
+            echo "🚀 Start ${{ github.ref_name }} release..."
+            VERSION_TYPE=MINOR
+            echo "VERSION_TYPE=${VERSION_TYPE}" 
+            echo "VERSION_TYPE=${VERSION_TYPE}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref_name }}" == release/* ]]; then
+            echo "🚀 Start ${{ github.ref_name }} release..."
+            VERSION_TYPE=BUGFIX
+            echo "VERSION_TYPE=${VERSION_TYPE}" 
+            echo "VERSION_TYPE=${VERSION_TYPE}" >> $GITHUB_OUTPUT
+          else 
+            echo "⛔ workflow can only be run on the main/master branch!"
+            exit 1
+          fi
+
+    #   - name: Import GPG key
+    #     shell: bash
+    #     # GPG private key, which is exported with armor (start with: '-----BEGIN PGP PRIVATE KEY BLOCK-----') and it is encoded with base64, and stored in secrets
+    #     # the private key is decoded with base64 and it is imported
+    #     # run: echo "${{ inputs.wf-gpg-private-key }}" | base64 --decode | gpg --batch --import
+    #     # GPG private key, which is exported with armor (start with: '-----BEGIN PGP PRIVATE KEY BLOCK-----') and stored in secrets
+    #     run: echo "${{ inputs.wf-gpg-private-key }}" | gpg --batch --import
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          # Private SSH key in PEM format (start with: '-----BEGIN RSA PRIVATE KEY-----')
+          key: ${{ inputs.wf-ssh-private-key }}
+          name: id_rsa
+          known_hosts: unnecessary
+
+
+      - name: Set up JDK version
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.java-distribution }}
+          server-id: ${{ inputs.wf-maven-settings-xml-server-id }}
+          # Environment variable name for the username for authentication to the Apache Maven repository. Default is GITHUB_ACTOR.
+          server-username: MAVEN_USERNAME
+          # Environment variable name for password or token for authentication to the Apache Maven repository. Default is GITHUB_TOKEN.
+          server-password: MAVEN_PASSWORD
+          #   settings-path: ${{ github.workspace }} # location for the settings.xml file
+          gpg-private-key: ${{ secrets.wf-gpg-private-key }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+          cache: 'maven'
+
+      - name: Configure GIT for signed commit
+        shell: bash
+        run: |
+          git config --global user.name "${{ inputs.wf-git-username }}"
+          git config --global user.email "${{ inputs.wf-git-email }}"
+          git config --global user.signingkey "${{ inputs.wf-gpg-key-id }}"
+          git config --global commit.gpgsign true
+          git config --global tag.gpgSign true
+
+      - name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ inputs.wf-github-token }}
+          ref: ${{ github.ref_name }}
+
+      - name: Maven release prepare DryRun and release branch
+        id: prepare
+        shell: bash
+        run: |
+          mvn -B ${{ inputs.wf-maven-cmd-customization }} release:prepare -DdryRun=true
+          if [[ "${{ steps.precheck.outputs.VERSION_TYPE }}" == "MINOR" ]]; then
+            SCM_TAG=`cat release.properties | grep -w "scm.tag" | cut -d'=' -f2`
+            echo "SCM_TAG=${SCM_TAG}" 
+            echo "SCM_TAG=${SCM_TAG}" >> $GITHUB_OUTPUT
+          fi
+          mvn -B ${{ inputs.wf-maven-cmd-customization }} release:clean --file pom.xml
+          if [[ "${{ steps.precheck.outputs.VERSION_TYPE }}" == "MINOR" ]]; then
+            RELEASE_BRANCH_NAME=release/${SCM_TAG%.*}.x
+            echo "RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME}"
+            echo "RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME}" >> $GITHUB_OUTPUT
+            echo new release branch name is ${RELEASE_BRANCH_NAME}
+            MR_BRANCH_NAME=feature/${SCM_TAG}-release
+            echo "MR_BRANCH_NAME=${MR_BRANCH_NAME}"
+            echo "MR_BRANCH_NAME=${MR_BRANCH_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release branch
+        id: createreleasebranch
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        shell: bash
+        run: |
+          git checkout -b ${{ steps.prepare.outputs.RELEASE_BRANCH_NAME }} refs/remotes/origin/${{ github.ref_name }}
+          git push --set-upstream origin ${{ steps.prepare.outputs.RELEASE_BRANCH_NAME }}
+          echo "${{ steps.prepare.outputs.RELEASE_BRANCH_NAME }} branch created."
+
+      - name: Checkout release branch
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ inputs.wf-github-token }}
+          ref: ${{ steps.prepare.outputs.RELEASE_BRANCH_NAME }}
+
+      - name: Maven release PREPARE
+        shell: bash
+        run: |
+            mvn -B ${{ inputs.wf-maven-cmd-customization }} release:prepare -Dgpg.keyname=${{ inputs.wf-gpg-key-id }}
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ inputs.wf-gpg-key-passphrase }}
+
+      - name: Maven release PERFORM
+        shell: bash
+        run: mvn -B ${{ inputs.wf-maven-cmd-customization }} release:perform -Dgpg.keyname=${{ inputs.wf-gpg-key-id }}
+        env:
+          MAVEN_USERNAME: ${{ inputs.wf-maven-central-username }}
+          MAVEN_PASSWORD: '${{ inputs.wf-maven-central-password }}'
+          MAVEN_GPG_PASSPHRASE: ${{ inputs.wf-gpg-key-passphrase }}
+
+      - name: Checkout main/master
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ inputs.wf-github-token }}
+          ref: ${{ github.ref_name }}
+
+      - name: Create bump version branch
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        id: createBumpBranch
+        shell: bash
+        run: |
+          git checkout -b ${{ steps.prepare.outputs.MR_BRANCH_NAME }} refs/remotes/origin/${{ github.ref_name }}
+          git push --set-upstream origin ${{ steps.prepare.outputs.MR_BRANCH_NAME }}
+          echo "${{ steps.prepare.outputs.MR_BRANCH_NAME }} branch created."
+
+      - name: Checkout bump version branch
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ inputs.wf-github-token }}
+          ref: ${{ steps.prepare.outputs.MR_BRANCH_NAME }}
+
+      - name: Create bump MINOR version branch
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        id: bumpbranch
+        shell: bash
+        run: |
+          NEXT_MASTER_VERSION=$(echo  ${{ steps.prepare.outputs.SCM_TAG }} |  awk -F'.' '{print $1"."$2+1"."0}' |  sed s/[.]$//)
+          TARGET_BRANCH_NEXT_VERSION=$(echo $NEXT_MASTER_VERSION | rev | cut -d '-' -f1 | rev)-SNAPSHOT
+           mvn -B release:update-versions -DdevelopmentVersion=$TARGET_BRANCH_NEXT_VERSION
+          COMMIT_MESSAGE="Bump version to $TARGET_BRANCH_NEXT_VERSION"
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE"
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+          git add .
+          git commit -a -m "$COMMIT_MESSAGE"
+          git push --atomic origin ${{ steps.prepare.outputs.MR_BRANCH_NAME }}
+          echo next version on ${{ github.ref_name }} is $TARGET_BRANCH_NEXT_VERSION
+
+      # This step creates a pull request between the current branch and the base branch.
+      - name: Create Pull Request
+        if: ${{ steps.precheck.outputs.VERSION_TYPE == 'MINOR' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ inputs.wf-github-token }}
+        run: |
+          gh pr create --base ${{ github.ref_name }} --fill-verbose --title '${{steps.bumpbranch.outputs.COMMIT_MESSAGE}}'
