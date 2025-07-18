@@ -1,5 +1,5 @@
 # It compiles the project using Maven and deploys SNAPSHOT artifacts
-name: Maven Deploy SNAPSHOT
+name: (WF) Maven Deploy SNAPSHOT
 
 on:
   workflow_call:
@@ -40,6 +40,7 @@ jobs:
         # Value of the GPG private key to import
         gpg-private-key: ${{ secrets.TECHUSER_GPG_PRIVATE_KEY }}
         # Quick setup caching for the dependencies managed through one of the predefined package managers. It can be one of "maven", "gradle" or "sbt".
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
         cache: 'maven'
 
     - name: Build with Maven
@@ -50,3 +51,4 @@ jobs:
       env:
         MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER_USERNAME }}
         MAVEN_PASSWORD: '${{ secrets.MAVEN_CENTRAL_USER_PASSWORD }}'
+        MAVEN_GPG_PASSPHRASE: ''

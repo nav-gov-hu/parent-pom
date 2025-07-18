@@ -1,5 +1,5 @@
 # Compile project with Maven workflow
-name: Compile project with Maven
+name: (WF) Compile project with Maven
 
 on:
   workflow_call:
