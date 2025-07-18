@@ -1,3 +1,4 @@
+# Compile project with Maven workflow
 name: Compile project with Maven
 
 on:

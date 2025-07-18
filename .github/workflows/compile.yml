@@ -10,7 +10,7 @@ on:
       - 'dependabot/**'
 
 jobs:
-  call-wf-compile-on-os-with-jdk:
+  compile:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
