@@ -10,6 +10,8 @@
     <artifactId>nav</artifactId>
     <packaging>pom</packaging>
 
+    <name>Nav open source parent pom</name>
+
     <properties>
         <project.scm.id>zenit-scm-id</project.scm.id>
     </properties>
