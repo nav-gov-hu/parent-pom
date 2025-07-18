@@ -1,0 +1,21 @@
+name: Compile project with Maven
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'
+  pull_request:
+    branches-ignore:
+      - 'gh-pages'
+      - 'dependabot/**'
+
+jobs:
+  call-wf-compile-on-os-with-jdk:
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        java: [ '17', '21' ]
+    uses: ./.github/workflows/WF-compile.yml
+    with:
+      runs-on-os: ${{ matrix.os }}
+      java-version: ${{ matrix.java }}
