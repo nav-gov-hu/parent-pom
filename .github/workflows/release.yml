@@ -16,7 +16,7 @@ on:
         required: true
 
 env:
-  MAVEN_ARGS: "-P parent-pom-release "
+  MAVEN_ARGS: "-P parent-pom-release"
 
 jobs:
   deploy-snapshot:
