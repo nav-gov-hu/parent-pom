@@ -43,7 +43,7 @@
                     <configuration>
                         <verbose>false</verbose>
                         <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                        <licenseName>MIT</licenseName>
+                        <licenseName>mit</licenseName>
                     </configuration>
                 </plugin>
 
