@@ -3,7 +3,7 @@
 
     <groupId>hu.gov.nav.pom</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -55,7 +55,7 @@
         <connection>scm:git:git@github.com:nav-gov-hu/parent-pom.git</connection>
         <developerConnection>scm:git:git@github.com:nav-gov-hu/parent-pom.git</developerConnection>
         <url>https://github.com/nav-gov-hu/parent-pom</url>
-      <tag>parent-pom-0.4.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <build>
