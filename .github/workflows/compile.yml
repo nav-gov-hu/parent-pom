@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
         java: [ '17', '21' ]
-    uses: ./.github/workflows/WF-compile.yml
+    uses: nav-gov-hu/.github/.github/workflows/WF-mvn-compile.yml@main
     with:
       runs-on-os: ${{ matrix.os }}
       java-version: ${{ matrix.java }}

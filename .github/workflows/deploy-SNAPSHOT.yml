@@ -17,7 +17,7 @@ on:
 
 jobs:
   deploy-snapshot:
-    uses: ./.github/workflows/WF-deploy-SNAPSHOT.yml
+    uses: nav-gov-hu/.github/.github/workflows/WF-mvn-deploy-SNAPSHOT.yml@main
     with:
       deploy-maven-cmd: mvn -B -P parent-pom-release deploy
     secrets: inherit
