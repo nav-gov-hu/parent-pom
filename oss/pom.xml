@@ -10,7 +10,7 @@
     <artifactId>oss</artifactId>
     <packaging>pom</packaging>
 
-    <name>Nav internal parent pom</name>
+    <name>Nav open source parent pom</name>
 
     <properties>
         <project.scm.id>nav-github-server</project.scm.id>
