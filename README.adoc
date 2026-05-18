@@ -1,7 +1,7 @@
 
 = parent-pom
 
-image:https://img.shields.io/github/license/nav-gov-hu/parent-pom?style=plastic&logo=mit[License of Parent pom project]
+image:https://img.shields.io/badge/license-MIT-green?style=plastic[License of Parent pom project]
 
 :sectnums:
 
